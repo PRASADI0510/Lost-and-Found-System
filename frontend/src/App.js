@@ -8,6 +8,12 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import ReportItemPage from './pages/ReportItemPage';
+import AboutPage from './pages/AboutPage';
+import LostItemsPage from './pages/LostItemsPage';
+import FoundItemsPage from './pages/FoundItemsPage';
+import AdminPage from './pages/AdminPage';
 import theme from './theme';
 
 function App() {
@@ -22,6 +28,12 @@ function App() {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/report-item" element={<ReportItemPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/lost-items" element={<LostItemsPage />} />
+                <Route path="/found-items" element={<FoundItemsPage />} />
+                <Route path="/admin" element={<AdminPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignUpPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />

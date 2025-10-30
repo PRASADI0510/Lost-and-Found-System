@@ -1,7 +1,10 @@
 import React from 'react';
 import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <Box sx={{ backgroundColor: '#FFFFFF', minHeight: 'calc(100vh - 100px)', display: 'flex', alignItems: 'center' }}>
       <Container maxWidth="lg">
@@ -57,6 +60,7 @@ const LandingPage = () => {
             <Button
               variant="contained"
               size="large"
+              onClick={() => navigate('/home')}
               sx={{
                 backgroundColor: '#0D2D5E',
                 color: '#FFFFFF',

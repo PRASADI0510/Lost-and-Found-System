@@ -1,9 +1,22 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import ShieldIcon from '@mui/icons-material/Shield';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
+
   return (
     <AppBar
       position="static"
@@ -16,7 +29,21 @@ const Header = () => {
       }}
     >
       <Toolbar sx={{ minHeight: '80px' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, gap: 1.5 }}>
+        <Box
+          component={RouterLink}
+          to="/home"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexGrow: 1,
+            gap: 1.5,
+            textDecoration: 'none',
+            cursor: 'pointer',
+            '&:hover': {
+              opacity: 0.8
+            }
+          }}
+        >
           <Box
             sx={{
               width: 48,
@@ -57,9 +84,10 @@ const Header = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5 }}>
+          {/* About button - always visible */}
           <Button
             component={RouterLink}
-            to="/login"
+            to="/about"
             variant="contained"
             sx={{
               backgroundColor: '#507FD9',
@@ -71,24 +99,79 @@ const Header = () => {
               },
             }}
           >
-            Login
+            About
           </Button>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="/signup"
-            sx={{
-              backgroundColor: '#507FD9',
-              color: '#FFFFFF',
-              padding: '8px 28px',
-              fontSize: '0.95rem',
-              '&:hover': {
-                backgroundColor: '#4070C9',
-              },
-            }}
-          >
-            Sign Up
-          </Button>
+
+          {currentUser ? (
+            <>
+              <Button
+                component={RouterLink}
+                to="/profile"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#507FD9',
+                  color: '#FFFFFF',
+                  padding: '8px 28px',
+                  fontSize: '0.95rem',
+                  '&:hover': {
+                    backgroundColor: '#4070C9',
+                  },
+                }}
+              >
+                Profile
+              </Button>
+              <Button
+                onClick={handleSignOut}
+                variant="contained"
+                sx={{
+                  backgroundColor: '#507FD9',
+                  color: '#FFFFFF',
+                  padding: '8px 28px',
+                  fontSize: '0.95rem',
+                  '&:hover': {
+                    backgroundColor: '#4070C9',
+                  },
+                }}
+              >
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                component={RouterLink}
+                to="/login"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#507FD9',
+                  color: '#FFFFFF',
+                  padding: '8px 28px',
+                  fontSize: '0.95rem',
+                  '&:hover': {
+                    backgroundColor: '#4070C9',
+                  },
+                }}
+              >
+                Login
+              </Button>
+              <Button
+                variant="contained"
+                component={RouterLink}
+                to="/signup"
+                sx={{
+                  backgroundColor: '#507FD9',
+                  color: '#FFFFFF',
+                  padding: '8px 28px',
+                  fontSize: '0.95rem',
+                  '&:hover': {
+                    backgroundColor: '#4070C9',
+                  },
+                }}
+              >
+                Sign Up
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
