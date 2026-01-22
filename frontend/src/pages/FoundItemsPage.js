@@ -27,7 +27,7 @@ const FoundItemsPage = () => {
       location: 'Cafeteria',
       date: '2025-03-26',
       category: 'bottle',
-      image: '/items/bottle.jpg',
+      image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)',
@@ -43,7 +43,7 @@ const FoundItemsPage = () => {
       location: 'Main Entrance',
       date: '2025-03-26',
       category: 'id-card',
-      image: '/items/id-card.jpg',
+      image: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -55,7 +55,7 @@ const FoundItemsPage = () => {
       location: 'Library 2nd floor',
       date: '2025-03-25',
       category: 'umbrella',
-      image: '/items/umbrella.jpg',
+      image: 'https://images.unsplash.com/photo-1534309466160-70b22cc6252c?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -67,7 +67,7 @@ const FoundItemsPage = () => {
       location: 'Physics Lab 3',
       date: '2025-03-24',
       category: 'book',
-      image: '/items/book.jpg',
+      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -79,7 +79,7 @@ const FoundItemsPage = () => {
       location: 'Parking Area',
       date: '2025-03-24',
       category: 'accessories',
-      image: '/items/glasses.jpg',
+      image: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -91,7 +91,7 @@ const FoundItemsPage = () => {
       location: 'Computer Lab 1',
       date: '2025-03-23',
       category: 'electronics',
-      image: '/items/usb.jpg',
+      image: 'https://images.unsplash.com/photo-1618410320928-25228d811631?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'helpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'

@@ -69,15 +69,12 @@ const ProfilePage = () => {
                 >
                   <Box
                     component="img"
-                    src="/profile-avatar.png"
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80"
                     alt="Profile"
                     sx={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover'
-                    }}
-                    onError={(e) => {
-                      e.target.style.display = 'none';
                     }}
                   />
                 </Avatar>
