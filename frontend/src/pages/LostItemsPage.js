@@ -27,7 +27,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/wallet.jpg',
+      image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)',
@@ -43,7 +43,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/charger.jpg',
+      image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -55,7 +55,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/wallet.jpg',
+      image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -67,7 +67,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/charger.jpg',
+      image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -79,7 +79,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/wallet.jpg',
+      image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'
@@ -91,7 +91,7 @@ const LostItemsPage = () => {
       location: 'Library 1st floor',
       date: '2025-03-25',
       category: 'wallet',
-      image: '/items/charger.jpg',
+      image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&q=80',
       postedBy: 'Security Office',
       contact: 'elpdesk@campus.edu · 011-123-4567',
       handover: 'Collect from Security Desk (9am-5pm)'

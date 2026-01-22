@@ -99,12 +99,8 @@ const SignUpPage = () => {
                   height: '100%',
                   objectFit: 'contain',
                 }}
-                src="/signup-illustration.png"
-                alt="Person sitting with checkmark"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #D4E9F7; font-size: 1rem; font-weight: 500;">Illustration Placeholder</div>';
-                }}
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
+                alt="Person celebrating success"
               />
             </Box>
           </Grid>
