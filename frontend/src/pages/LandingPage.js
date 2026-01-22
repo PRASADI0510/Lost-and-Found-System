@@ -97,12 +97,8 @@ const LandingPage = () => {
                   height: '100%',
                   objectFit: 'cover',
                 }}
-                src="/landing-image.jpg"
-                alt="A person pointing at a laptop screen"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #999; font-size: 1.2rem;">Image Placeholder</div>';
-                }}
+                src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&q=80"
+                alt="Team collaborating on finding solutions"
               />
             </Box>
           </Grid>

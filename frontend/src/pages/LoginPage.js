@@ -218,12 +218,8 @@ const LoginPage = () => {
                   height: '100%',
                   objectFit: 'cover',
                 }}
-                src="/login-illustration.png"
-                alt="Person with headphones"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #0B1F3F; font-size: 1rem; font-weight: 500;">Illustration Placeholder</div>';
-                }}
+                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80"
+                alt="Professional person working"
               />
             </Box>
           </Grid>
