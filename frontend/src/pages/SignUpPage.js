@@ -12,38 +12,64 @@ const SignUpPage = () => {
     password: '',
     confirmPassword: ''
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear field error on change
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => ({ ...prev, [e.target.name]: '' }));
+    }
+  };
+
+  const validate = () => {
+    const errors = {};
+
+    if (!formData.fullName.trim()) {
+      errors.fullName = 'Full name is required';
+    } else if (formData.fullName.trim().length < 2) {
+      errors.fullName = 'Name must be at least 2 characters';
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (formData.phone && !/^[0-9+\-() ]{7,15}$/.test(formData.phone)) {
+      errors.phone = 'Please enter a valid phone number';
+    }
+
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(formData.password)) {
+      errors.password = 'Password must contain uppercase and lowercase letters';
+    }
+
+    if (!formData.confirmPassword) {
+      errors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError('Please fill in all required fields');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
+    if (!validate()) return;
 
     try {
-      setError('');
       setLoading(true);
       await signup(formData.email, formData.password, formData.fullName, formData.role, formData.phone);
       navigate('/home');
@@ -51,13 +77,13 @@ const SignUpPage = () => {
       console.error('Signup error:', error);
       switch (error.code) {
         case 'auth/email-already-in-use':
-          setError('An account with this email already exists');
+          setFieldErrors((prev) => ({ ...prev, email: 'An account with this email already exists' }));
           break;
         case 'auth/invalid-email':
-          setError('Invalid email address');
+          setFieldErrors((prev) => ({ ...prev, email: 'Invalid email address' }));
           break;
         case 'auth/weak-password':
-          setError('Password is too weak. Please use at least 6 characters');
+          setFieldErrors((prev) => ({ ...prev, password: 'Password is too weak. Please use at least 6 characters' }));
           break;
         default:
           setError('Failed to create account. Please try again.');
@@ -66,6 +92,8 @@ const SignUpPage = () => {
       setLoading(false);
     }
   };
+
+  const inputSx = { '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } };
 
   return (
     <Box
@@ -97,9 +125,10 @@ const SignUpPage = () => {
                   width: '100%',
                   height: '100%',
                   objectFit: 'contain',
+                  borderRadius: '16px',
                 }}
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80"
-                alt="Person celebrating success"
+                src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&q=80"
+                alt="College students collaborating together"
               />
             </Box>
           </Grid>
@@ -136,16 +165,12 @@ const SignUpPage = () => {
               <Box component="form" onSubmit={handleSubmit}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
-                    Full Name
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
+                    Full Name *
                   </Typography>
                   <TextField
                     autoComplete="given-name"
                     name="fullName"
-                    required
                     fullWidth
                     id="fullName"
                     autoFocus
@@ -153,14 +178,13 @@ const SignUpPage = () => {
                     value={formData.fullName}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    error={!!fieldErrors.fullName}
+                    helperText={fieldErrors.fullName}
+                    sx={inputSx}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
                     Role
                   </Typography>
                   <TextField
@@ -172,7 +196,7 @@ const SignUpPage = () => {
                     value={formData.role}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    sx={inputSx}
                   >
                     <MenuItem value="student">Student</MenuItem>
                     <MenuItem value="security_officer">Security Officer</MenuItem>
@@ -180,14 +204,10 @@ const SignUpPage = () => {
                   </TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
-                    Email
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
+                    Email *
                   </Typography>
                   <TextField
-                    required
                     fullWidth
                     id="email"
                     name="email"
@@ -197,15 +217,14 @@ const SignUpPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    error={!!fieldErrors.email}
+                    helperText={fieldErrors.email}
+                    sx={inputSx}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
-                    Phone number
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
+                    Phone Number
                   </Typography>
                   <TextField
                     fullWidth
@@ -216,18 +235,16 @@ const SignUpPage = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    error={!!fieldErrors.phone}
+                    helperText={fieldErrors.phone}
+                    sx={inputSx}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
-                    Password
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
+                    Password *
                   </Typography>
                   <TextField
-                    required
                     fullWidth
                     name="password"
                     type="password"
@@ -237,18 +254,16 @@ const SignUpPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    error={!!fieldErrors.password}
+                    helperText={fieldErrors.password}
+                    sx={inputSx}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography
-                    variant="body2"
-                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
-                  >
-                    Confirm Password
+                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
+                    Confirm Password *
                   </Typography>
                   <TextField
-                    required
                     fullWidth
                     name="confirmPassword"
                     type="password"
@@ -258,7 +273,9 @@ const SignUpPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                    error={!!fieldErrors.confirmPassword}
+                    helperText={fieldErrors.confirmPassword}
+                    sx={inputSx}
                   />
                 </Grid>
               </Grid>
