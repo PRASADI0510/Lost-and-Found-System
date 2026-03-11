@@ -8,7 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { findMatches } from '../utils/matchingAlgorithm';
 import { notifyMatch, sendMatchEmail } from '../utils/notifications';
 
@@ -49,7 +49,8 @@ const ReportItemPage = () => {
   const { currentUser, userProfile } = useAuth();
   const { lostItems, foundItems, refresh } = useData();
   const navigate = useNavigate();
-  const [reportType, setReportType] = useState('lost');
+  const [searchParams] = useSearchParams();
+  const [reportType, setReportType] = useState(searchParams.get('type') === 'found' ? 'found' : 'lost');
   const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

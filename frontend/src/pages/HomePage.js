@@ -48,7 +48,7 @@ const HomePage = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Button variant="contained" onClick={() => navigate('/report-item')}
+              <Button variant="contained" onClick={() => navigate('/report-item?type=lost')}
                 sx={{ backgroundColor: '#507FD9', color: '#FFFFFF', padding: '8px 24px', fontSize: '0.9rem',
                   fontWeight: 600, borderRadius: '8px', textTransform: 'none', '&:hover': { backgroundColor: '#4070C9' } }}>
                 Lost Item
@@ -71,7 +71,7 @@ const HomePage = () => {
                   </Typography>
                 </Box>
               </Box>
-              <Button variant="contained" onClick={() => navigate('/report-item')}
+              <Button variant="contained" onClick={() => navigate('/report-item?type=found')}
                 sx={{ backgroundColor: '#507FD9', color: '#FFFFFF', padding: '8px 24px', fontSize: '0.9rem',
                   fontWeight: 600, borderRadius: '8px', textTransform: 'none', '&:hover': { backgroundColor: '#4070C9' } }}>
                 Found Item
