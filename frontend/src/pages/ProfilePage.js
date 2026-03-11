@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   Box, Container, Typography, TextField, Grid, Avatar, Button, Alert, CircularProgress
 } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
-  const { currentUser, userProfile, updateUserProfile } = useAuth();
+  const { currentUser, userProfile, updateUserProfile, logout } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -116,11 +119,20 @@ const ProfilePage = () => {
                 <Typography variant="body1" sx={{ mb: 1, color: '#000000', fontWeight: 500, fontSize: '0.95rem' }}>Description</Typography>
                 <TextField fullWidth name="description" variant="outlined" multiline rows={4} value={formData.description} onChange={handleChange} sx={inputSx} />
               </Box>
-              <Button variant="contained" onClick={handleSave} disabled={loading}
-                sx={{ backgroundColor: '#507FD9', color: '#FFFFFF', padding: '10px 40px', fontSize: '1rem',
-                  fontWeight: 600, borderRadius: '8px', textTransform: 'none', '&:hover': { backgroundColor: '#4070C9' } }}>
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Save Profile'}
-              </Button>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button variant="contained" onClick={handleSave} disabled={loading}
+                  sx={{ backgroundColor: '#507FD9', color: '#FFFFFF', padding: '10px 40px', fontSize: '1rem',
+                    fontWeight: 600, borderRadius: '8px', textTransform: 'none', '&:hover': { backgroundColor: '#4070C9' } }}>
+                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Save Profile'}
+                </Button>
+                <Button variant="outlined" onClick={async () => { await logout(); navigate('/login'); }}
+                  startIcon={<LogoutIcon />}
+                  sx={{ padding: '10px 32px', fontSize: '1rem', fontWeight: 600, borderRadius: '8px',
+                    textTransform: 'none', color: '#D32F2F', borderColor: '#D32F2F',
+                    '&:hover': { backgroundColor: '#FFEBEE', borderColor: '#D32F2F' } }}>
+                  Sign Out
+                </Button>
+              </Box>
             </Box>
           </Grid>
         </Grid>

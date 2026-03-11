@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box, Button, Container, Typography, Paper, Grid, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, Chip
@@ -9,10 +9,13 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { useData } from '../contexts/DataContext';
 import { findMatches, getConfidenceLabel, getConfidenceColor } from '../utils/matchingAlgorithm';
+import ItemDetailModal from '../components/ItemDetailModal';
 
 const HomePage = () => {
   const navigate = useNavigate();
   const { items, lostItems, foundItems } = useData();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const recentActivity = [...items]
     .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))
@@ -167,7 +170,7 @@ const HomePage = () => {
                 ) : (
                   recentActivity.map((item) => (
                     <TableRow key={item.id} hover sx={{ cursor: 'pointer' }}
-                      onClick={() => navigate(item.type === 'lost' ? '/lost-items' : '/found-items')}>
+                      onClick={() => { setSelectedItem(item); setOpenModal(true); }}>
                       <TableCell>
                         <Chip label={item.type === 'lost' ? 'Lost' : 'Found'} size="small"
                           sx={{ backgroundColor: item.type === 'lost' ? '#FFEBEE' : '#E8F5E9',
@@ -189,6 +192,15 @@ const HomePage = () => {
           </TableContainer>
         </Paper>
       </Container>
+
+      {selectedItem && (
+        <ItemDetailModal
+          open={openModal}
+          onClose={() => { setOpenModal(false); setSelectedItem(null); }}
+          item={selectedItem}
+          type={selectedItem.type}
+        />
+      )}
     </Box>
   );
 };

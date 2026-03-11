@@ -18,7 +18,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const ItemDetailModal = ({ open, onClose, item, type }) => {
   const { currentUser, userProfile } = useAuth();
-  const { refresh } = useData();
+  const { refresh, claims } = useData();
   const [showClaimForm, setShowClaimForm] = useState(false);
   const [claimDescription, setClaimDescription] = useState('');
   const [claimLoading, setClaimLoading] = useState(false);
@@ -182,12 +182,25 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
               )}
 
               {/* Claim Section */}
-              {type === 'found' && (
+              {type === 'found' && (() => {
+                const itemClaimed = item.status === 'claimed';
+                const userAlreadyClaimed = currentUser && claims.some(
+                  (c) => c.itemId === item.id && c.claimantId === currentUser.uid
+                );
+                return (
                 <Box>
                   {claimSuccess && <Alert severity="success" sx={{ mb: 2 }}>{claimSuccess}</Alert>}
                   {claimError && <Alert severity="error" sx={{ mb: 2 }}>{claimError}</Alert>}
 
-                  {!showClaimForm ? (
+                  {itemClaimed ? (
+                    <Alert severity="info" sx={{ borderRadius: '8px' }}>
+                      This item is already claimed.
+                    </Alert>
+                  ) : userAlreadyClaimed ? (
+                    <Alert severity="info" sx={{ borderRadius: '8px' }}>
+                      You have already submitted a claim for this item.
+                    </Alert>
+                  ) : !showClaimForm ? (
                     <Button fullWidth variant="contained"
                       onClick={() => setShowClaimForm(true)}
                       disabled={!currentUser}
@@ -218,7 +231,8 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
                     </Box>
                   )}
                 </Box>
-              )}
+                );
+              })()}
             </Box>
           </Box>
         </DialogContent>

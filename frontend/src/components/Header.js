@@ -67,10 +67,19 @@ const Header = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
-          <Button component={RouterLink} to="/about" variant="contained" sx={btnSx}>About</Button>
+          <Button component={RouterLink} to="/lost-items" variant="contained" sx={btnSx}>Lost Items</Button>
+          <Button component={RouterLink} to="/found-items" variant="contained" sx={btnSx}>Found Items</Button>
 
           {currentUser ? (
             <>
+              {(isAdmin || isSecurityOfficer) && (
+                <Button component={RouterLink} to="/admin" variant="contained" sx={btnSx}>Admin</Button>
+              )}
+
+              <Button component={RouterLink} to="/my-claims" variant="contained" sx={btnSx}>My Claims</Button>
+              <Button component={RouterLink} to="/profile" variant="contained" sx={btnSx}>Profile</Button>
+              <Button component={RouterLink} to="/about" variant="contained" sx={btnSx}>About</Button>
+
               <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ color: '#507FD9' }}>
                 <Badge badgeContent={unreadCount} color="error">
                   <NotificationsIcon />
@@ -93,17 +102,10 @@ const Header = () => {
                   ))
                 )}
               </Menu>
-
-              {(isAdmin || isSecurityOfficer) && (
-                <Button component={RouterLink} to="/admin" variant="contained" sx={btnSx}>Admin</Button>
-              )}
-
-              <Button component={RouterLink} to="/my-claims" variant="contained" sx={btnSx}>My Claims</Button>
-              <Button component={RouterLink} to="/profile" variant="contained" sx={btnSx}>Profile</Button>
-              <Button onClick={handleSignOut} variant="contained" sx={btnSx}>Sign Out</Button>
             </>
           ) : (
             <>
+              <Button component={RouterLink} to="/about" variant="contained" sx={btnSx}>About</Button>
               <Button component={RouterLink} to="/login" variant="contained" sx={btnSx}>Login</Button>
               <Button variant="contained" component={RouterLink} to="/signup" sx={btnSx}>Sign Up</Button>
             </>
