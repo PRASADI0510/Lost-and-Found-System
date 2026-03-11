@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, Grid, TextField, Typography, Link as MuiLink, Alert, CircularProgress } from '@mui/material';
+import { Box, Button, Container, Grid, TextField, Typography, Link as MuiLink, Alert, CircularProgress, MenuItem } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
-    role: '',
+    role: 'student',
     email: '',
     phone: '',
     password: '',
@@ -27,7 +27,6 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all required fields');
       return;
@@ -46,7 +45,7 @@ const SignUpPage = () => {
     try {
       setError('');
       setLoading(true);
-      await signup(formData.email, formData.password, formData.fullName);
+      await signup(formData.email, formData.password, formData.fullName, formData.role, formData.phone);
       navigate('/home');
     } catch (error) {
       console.error('Signup error:', error);
@@ -139,12 +138,7 @@ const SignUpPage = () => {
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Full Name
                   </Typography>
@@ -159,23 +153,13 @@ const SignUpPage = () => {
                     value={formData.fullName}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Role
                   </Typography>
@@ -183,28 +167,22 @@ const SignUpPage = () => {
                     fullWidth
                     id="role"
                     name="role"
-                    autoComplete="role"
+                    select
                     variant="outlined"
                     value={formData.role}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
-                  />
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
+                  >
+                    <MenuItem value="student">Student</MenuItem>
+                    <MenuItem value="security_officer">Security Officer</MenuItem>
+                    <MenuItem value="admin">Administrator</MenuItem>
+                  </TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Email
                   </Typography>
@@ -219,23 +197,13 @@ const SignUpPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Phone number
                   </Typography>
@@ -248,23 +216,13 @@ const SignUpPage = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Password
                   </Typography>
@@ -279,23 +237,13 @@ const SignUpPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography
                     variant="body2"
-                    sx={{
-                      mb: 0.75,
-                      color: '#0D2D5E',
-                      fontWeight: 500,
-                      fontSize: '0.875rem'
-                    }}
+                    sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}
                   >
                     Confirm Password
                   </Typography>
@@ -310,12 +258,7 @@ const SignUpPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     disabled={loading}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                      }
-                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#FFFFFF', borderRadius: '8px' } }}
                   />
                 </Grid>
               </Grid>
@@ -325,21 +268,10 @@ const SignUpPage = () => {
                 variant="contained"
                 disabled={loading}
                 sx={{
-                  mt: 3,
-                  mb: 2,
-                  backgroundColor: '#0D2D5E',
-                  color: '#FFFFFF',
-                  borderRadius: '25px',
-                  padding: '11px',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  '&:hover': {
-                    backgroundColor: '#0A2348',
-                  },
-                  '&:disabled': {
-                    backgroundColor: '#0D2D5E',
-                    opacity: 0.6,
-                  },
+                  mt: 3, mb: 2, backgroundColor: '#0D2D5E', color: '#FFFFFF',
+                  borderRadius: '25px', padding: '11px', fontWeight: 600, fontSize: '1rem',
+                  '&:hover': { backgroundColor: '#0A2348' },
+                  '&:disabled': { backgroundColor: '#0D2D5E', opacity: 0.6 },
                 }}
               >
                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account'}
@@ -352,9 +284,7 @@ const SignUpPage = () => {
                 align="center"
                 display="block"
                 sx={{
-                  color: '#0D2D5E',
-                  textDecoration: 'none',
-                  fontSize: '0.875rem',
+                  color: '#0D2D5E', textDecoration: 'none', fontSize: '0.875rem',
                   '&:hover': { textDecoration: 'underline' }
                 }}
               >

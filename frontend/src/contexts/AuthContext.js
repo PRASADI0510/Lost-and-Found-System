@@ -7,7 +7,8 @@ import {
   onAuthStateChanged,
   updateProfile
 } from 'firebase/auth';
-import { auth } from '../firebase';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '../firebase';
 
 const AuthContext = createContext();
 
@@ -21,37 +22,80 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sign up with email and password
-  const signup = async (email, password, fullName) => {
+  const fetchUserProfile = async (uid) => {
+    try {
+      const docRef = doc(db, 'users', uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUserProfile(docSnap.data());
+        return docSnap.data();
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
+  };
+
+  const signup = async (email, password, fullName, role, phone) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // Update the user's display name
-    await updateProfile(userCredential.user, {
-      displayName: fullName
-    });
+    await updateProfile(userCredential.user, { displayName: fullName });
+
+    const userDoc = {
+      uid: userCredential.user.uid,
+      displayName: fullName,
+      email,
+      role: role || 'student',
+      phone: phone || '',
+      sNumber: '',
+      faculty: '',
+      description: '',
+      createdAt: serverTimestamp()
+    };
+    await setDoc(doc(db, 'users', userCredential.user.uid), userDoc);
+    setUserProfile(userDoc);
+
     return userCredential;
   };
 
-  // Login with email and password
   const login = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  // Logout
   const logout = () => {
+    setUserProfile(null);
     return signOut(auth);
   };
 
-  // Reset password
   const resetPassword = (email) => {
     return sendPasswordResetEmail(auth, email);
+  };
+
+  const updateUserProfile = async (data) => {
+    if (!currentUser) return;
+    const docRef = doc(db, 'users', currentUser.uid);
+    await setDoc(docRef, data, { merge: true });
+    // Update Firebase Auth displayName if changed
+    if (data.displayName && data.displayName !== currentUser.displayName) {
+      await updateProfile(currentUser, { displayName: data.displayName });
+    }
+    // Re-fetch full profile from Firestore to ensure local state is complete
+    await fetchUserProfile(currentUser.uid);
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
+      if (user) {
+        // Non-blocking: fetch profile in background
+        fetchUserProfile(user.uid);
+      } else {
+        setUserProfile(null);
+      }
     });
 
     return unsubscribe;
@@ -59,15 +103,20 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    userProfile,
+    loading,
     signup,
     login,
     logout,
     resetPassword,
+    updateUserProfile,
+    fetchUserProfile,
   };
 
+  // Never block rendering - always render children immediately
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

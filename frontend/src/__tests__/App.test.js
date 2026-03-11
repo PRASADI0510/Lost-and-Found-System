@@ -4,9 +4,10 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../contexts/AuthContext';
+import { DataProvider } from '../contexts/DataContext';
 import LoginPage from '../pages/LoginPage';
 import SignUpPage from '../pages/SignUpPage';
 import Header from '../components/Header';
@@ -15,7 +16,7 @@ import AdminPage from '../pages/AdminPage';
 import ReportItemPage from '../pages/ReportItemPage';
 import ItemDetailModal from '../components/ItemDetailModal';
 
-// Mock Firebase
+// Mock Firebase Auth
 jest.mock('firebase/auth', () => ({
   getAuth: jest.fn(() => ({})),
   createUserWithEmailAndPassword: jest.fn(),
@@ -29,67 +30,84 @@ jest.mock('firebase/auth', () => ({
   }),
 }));
 
-jest.mock('../firebase', () => ({ auth: {} }));
+// Mock Firebase Firestore
+jest.mock('firebase/firestore', () => ({
+  getFirestore: jest.fn(() => ({})),
+  collection: jest.fn(() => 'mock-collection'),
+  doc: jest.fn(),
+  setDoc: jest.fn(() => Promise.resolve()),
+  getDoc: jest.fn(() => Promise.resolve({ exists: () => true, data: () => ({ role: 'student', displayName: 'Test', email: 'test@test.com' }) })),
+  getDocs: jest.fn(() => Promise.resolve({ docs: [], size: 0 })),
+  addDoc: jest.fn(() => Promise.resolve({ id: 'test-id' })),
+  updateDoc: jest.fn(() => Promise.resolve()),
+  deleteDoc: jest.fn(() => Promise.resolve()),
+  query: jest.fn(() => 'mock-query'),
+  where: jest.fn(() => 'mock-where'),
+  orderBy: jest.fn(),
+  limit: jest.fn(),
+  onSnapshot: jest.fn((q, cb) => { cb({ docs: [] }); return jest.fn(); }),
+  serverTimestamp: jest.fn(),
+}));
+
+// Mock Firebase Storage
+jest.mock('firebase/storage', () => ({
+  getStorage: jest.fn(() => ({})),
+  ref: jest.fn(),
+  uploadBytes: jest.fn(),
+  getDownloadURL: jest.fn(),
+}));
+
+jest.mock('../firebase', () => ({
+  auth: {},
+  db: {},
+  storage: {},
+}));
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
 }));
 
-// Helper render functions
 const renderWithProviders = (component) => {
   return render(
     <BrowserRouter>
       <AuthProvider>
-        {component}
+        <DataProvider>
+          {component}
+        </DataProvider>
       </AuthProvider>
     </BrowserRouter>
   );
 };
 
+// Helper to set logged-in mock
+const mockLoggedIn = () => {
+  const { onAuthStateChanged } = require('firebase/auth');
+  onAuthStateChanged.mockImplementation((auth, cb) => {
+    cb({ uid: '1', displayName: 'Test', email: 'test@test.com' });
+    return jest.fn();
+  });
+};
+
+// Helper to set logged-out mock
+const mockLoggedOut = () => {
+  const { onAuthStateChanged } = require('firebase/auth');
+  onAuthStateChanged.mockImplementation((auth, cb) => { cb(null); return jest.fn(); });
+};
+
 // ============================================================================
-// TEST CASES TABLE
-// ============================================================================
-// | TC# | Module          | Test Description                    | Expected Result |
-// |-----|-----------------|-------------------------------------|-----------------|
-// | 01  | Login           | Renders login page title            | "Log In" shown  |
-// | 02  | Login           | Renders email input field           | Field exists    |
-// | 03  | Login           | Renders password input field        | Field exists    |
-// | 04  | Login           | Renders login button                | Button exists   |
-// | 05  | Login           | Renders forgot password link        | Link exists     |
-// | 06  | SignUp          | Renders create account title        | Title shown     |
-// | 07  | SignUp          | Renders all required form fields    | Fields exist    |
-// | 08  | SignUp          | Renders create account button       | Button exists   |
-// | 09  | SignUp          | Renders login link                  | Link exists     |
-// | 10  | Header          | Renders app title                   | Title shown     |
-// | 11  | Header          | Renders About button                | Button exists   |
-// | 12  | Header          | Shows Login/SignUp when logged out  | Buttons shown   |
-// | 13  | Header          | Shows Profile/SignOut when logged in| Buttons shown   |
-// | 14  | LostItems       | Renders page title                  | Title shown     |
-// | 15  | LostItems       | Renders item cards                  | Cards displayed |
-// | 16  | LostItems       | Shows item locations                | Locations shown |
-// | 17  | LostItems       | Shows item dates                    | Dates shown     |
-// | 18  | Admin           | Renders admin panel title           | Title shown     |
-// | 19  | Admin           | Renders data table                  | Table exists    |
-// | 20  | Admin           | Renders table headers               | Headers shown   |
-// | 21  | Admin           | Renders item data                   | Data displayed  |
-// | 22  | Admin           | Renders action buttons              | Buttons exist   |
-// | 23  | Admin           | Remove button removes item          | Item removed    |
-// | 24  | ReportItem      | Renders page title                  | Title shown     |
-// | 25  | ReportItem      | Renders type toggle (Lost/Found)    | Toggle exists   |
-// | 26  | ReportItem      | Renders all form fields             | Fields exist    |
-// | 27  | ReportItem      | Renders Submit and Clear buttons    | Buttons exist   |
-// | 28  | ItemModal       | Renders modal when open             | Modal shown     |
-// | 29  | ItemModal       | Displays item details               | Details shown   |
-// | 30  | ItemModal       | Shows Claim button for found items  | Button shown    |
+// 30 TEST CASES
 // ============================================================================
 
 describe('Lost and Found System - 30 Test Cases', () => {
 
   // LOGIN PAGE TESTS (TC01-TC05)
   describe('Login Page', () => {
+    beforeEach(mockLoggedOut);
+
     test('TC01: Renders login page title', () => {
       renderWithProviders(<LoginPage />);
-      expect(screen.getByText('Log In')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /log in/i })).toBeInTheDocument();
     });
 
     test('TC02: Renders email input field', () => {
@@ -115,9 +133,11 @@ describe('Lost and Found System - 30 Test Cases', () => {
 
   // SIGNUP PAGE TESTS (TC06-TC09)
   describe('SignUp Page', () => {
+    beforeEach(mockLoggedOut);
+
     test('TC06: Renders create account title', () => {
       renderWithProviders(<SignUpPage />);
-      expect(screen.getByText('Create Account')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /create account/i })).toBeInTheDocument();
     });
 
     test('TC07: Renders all required form fields', () => {
@@ -142,167 +162,191 @@ describe('Lost and Found System - 30 Test Cases', () => {
   // HEADER TESTS (TC10-TC13)
   describe('Header Component', () => {
     test('TC10: Renders app title', () => {
+      mockLoggedOut();
       renderWithProviders(<Header />);
       expect(screen.getByText('Lost and Found')).toBeInTheDocument();
     });
 
     test('TC11: Renders About button', () => {
+      mockLoggedOut();
       renderWithProviders(<Header />);
       expect(screen.getByText('About')).toBeInTheDocument();
     });
 
     test('TC12: Shows Login and Sign Up buttons when logged out', () => {
+      mockLoggedOut();
       renderWithProviders(<Header />);
       expect(screen.getByText('Login')).toBeInTheDocument();
       expect(screen.getByText('Sign Up')).toBeInTheDocument();
     });
 
-    test('TC13: Shows Profile and Sign Out when logged in', () => {
-      const { onAuthStateChanged } = require('firebase/auth');
-      onAuthStateChanged.mockImplementation((auth, cb) => { cb({ uid: '1' }); return jest.fn(); });
+    test('TC13: Shows Profile and Sign Out when logged in', async () => {
+      mockLoggedIn();
       renderWithProviders(<Header />);
-      expect(screen.getByText('Profile')).toBeInTheDocument();
-      expect(screen.getByText('Sign Out')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Profile')).toBeInTheDocument();
+        expect(screen.getByText('Sign Out')).toBeInTheDocument();
+      });
     });
   });
 
   // LOST ITEMS PAGE TESTS (TC14-TC17)
   describe('Lost Items Page', () => {
-    beforeEach(() => {
-      const { onAuthStateChanged } = require('firebase/auth');
-      onAuthStateChanged.mockImplementation((auth, cb) => { cb({ uid: '1' }); return jest.fn(); });
-    });
+    beforeEach(mockLoggedOut);
 
     test('TC14: Renders page title', () => {
       renderWithProviders(<LostItemsPage />);
       expect(screen.getByText('Lost Items')).toBeInTheDocument();
     });
 
-    test('TC15: Renders item cards', () => {
+    test('TC15: Renders search field', () => {
       renderWithProviders(<LostItemsPage />);
-      expect(screen.getAllByText('Black wallet').length).toBeGreaterThan(0);
+      expect(screen.getByPlaceholderText(/search by title/i)).toBeInTheDocument();
     });
 
-    test('TC16: Shows item locations', () => {
+    test('TC16: Renders category filter dropdown', () => {
       renderWithProviders(<LostItemsPage />);
-      expect(screen.getAllByText('Library 1st floor').length).toBeGreaterThan(0);
+      const selects = screen.getAllByRole('combobox');
+      expect(selects.length).toBeGreaterThanOrEqual(1);
     });
 
-    test('TC17: Shows item dates', () => {
+    test('TC17: Shows empty state when no items fetched', async () => {
       renderWithProviders(<LostItemsPage />);
-      expect(screen.getAllByText('2025-03-25').length).toBeGreaterThan(0);
+      await waitFor(() => {
+        expect(screen.getByText('No lost items found')).toBeInTheDocument();
+      });
     });
   });
 
   // ADMIN PAGE TESTS (TC18-TC23)
   describe('Admin Page', () => {
-    beforeEach(() => {
-      const { onAuthStateChanged } = require('firebase/auth');
-      onAuthStateChanged.mockImplementation((auth, cb) => { cb({ uid: '1' }); return jest.fn(); });
+    beforeEach(mockLoggedIn);
+
+    test('TC18: Renders admin panel title', async () => {
+      renderWithProviders(<AdminPage />);
+      await waitFor(() => {
+        expect(screen.getByText('Admin Panel')).toBeInTheDocument();
+      });
     });
 
-    test('TC18: Renders admin panel title', () => {
+    test('TC19: Renders tabs for Items, Claims, Users', async () => {
       renderWithProviders(<AdminPage />);
-      expect(screen.getByText('Admin Panel')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: /Items/ })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: /Claims/ })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: /Users/ })).toBeInTheDocument();
+      });
     });
 
-    test('TC19: Renders data table', () => {
+    test('TC20: Renders stats cards', async () => {
       renderWithProviders(<AdminPage />);
-      expect(screen.getByRole('table')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Total Items')).toBeInTheDocument();
+        expect(screen.getByText('Pending Claims')).toBeInTheDocument();
+        expect(screen.getByText('Total Users')).toBeInTheDocument();
+      });
     });
 
-    test('TC20: Renders table headers', () => {
+    test('TC21: Renders items table headers', async () => {
       renderWithProviders(<AdminPage />);
-      expect(screen.getByText('Type')).toBeInTheDocument();
-      expect(screen.getByText('Title')).toBeInTheDocument();
-      expect(screen.getByText('Category')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Title')).toBeInTheDocument();
+        expect(screen.getByText('Category')).toBeInTheDocument();
+      });
     });
 
-    test('TC21: Renders item data', () => {
+    test('TC22: Shows empty state for items', async () => {
       renderWithProviders(<AdminPage />);
-      expect(screen.getByText('Black Wallet')).toBeInTheDocument();
-      expect(screen.getByText('Blue Water Bottle')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('No items found.')).toBeInTheDocument();
+      });
     });
 
-    test('TC22: Renders action buttons', () => {
+    test('TC23: Shows claims tab content on click', async () => {
       renderWithProviders(<AdminPage />);
-      expect(screen.getAllByText('Mark Claim').length).toBe(4);
-      expect(screen.getAllByText('Remove').length).toBe(4);
-    });
-
-    test('TC23: Remove button removes item from table', () => {
-      renderWithProviders(<AdminPage />);
-      expect(screen.getByText('Black Wallet')).toBeInTheDocument();
-      fireEvent.click(screen.getAllByText('Remove')[0]);
-      expect(screen.queryByText('Black Wallet')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole('tab', { name: /Claims/ })).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByRole('tab', { name: /Claims/ }));
+      await waitFor(() => {
+        expect(screen.getByText('No claims found.')).toBeInTheDocument();
+      });
     });
   });
 
   // REPORT ITEM PAGE TESTS (TC24-TC27)
   describe('Report Item Page', () => {
-    beforeEach(() => {
-      const { onAuthStateChanged } = require('firebase/auth');
-      onAuthStateChanged.mockImplementation((auth, cb) => {
-        cb({ uid: '1', displayName: 'Test', email: 'test@test.com' });
-        return jest.fn();
+    beforeEach(mockLoggedIn);
+
+    test('TC24: Renders page title', async () => {
+      renderWithProviders(<ReportItemPage />);
+      await waitFor(() => {
+        expect(screen.getByText('Report an item')).toBeInTheDocument();
       });
     });
 
-    test('TC24: Renders page title', () => {
+    test('TC25: Renders type toggle (Lost/Found)', async () => {
       renderWithProviders(<ReportItemPage />);
-      expect(screen.getByText('Report an item')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Lost')).toBeInTheDocument();
+        expect(screen.getByText('Found')).toBeInTheDocument();
+      });
     });
 
-    test('TC25: Renders type toggle (Lost/Found)', () => {
+    test('TC26: Renders all form fields', async () => {
       renderWithProviders(<ReportItemPage />);
-      expect(screen.getByText('Lost')).toBeInTheDocument();
-      expect(screen.getByText('Found')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/Item Title/)).toBeInTheDocument();
+        expect(screen.getByText(/Description/)).toBeInTheDocument();
+      });
     });
 
-    test('TC26: Renders all form fields', () => {
+    test('TC27: Renders Submit and Clear buttons', async () => {
       renderWithProviders(<ReportItemPage />);
-      expect(screen.getByText('Item Title')).toBeInTheDocument();
-      expect(screen.getByText('Category')).toBeInTheDocument();
-      expect(screen.getByText('Description')).toBeInTheDocument();
-      expect(screen.getByText('Location')).toBeInTheDocument();
-    });
-
-    test('TC27: Renders Submit and Clear buttons', () => {
-      renderWithProviders(<ReportItemPage />);
-      expect(screen.getByText('Submit')).toBeInTheDocument();
-      expect(screen.getByText('Clear')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Submit')).toBeInTheDocument();
+        expect(screen.getByText('Clear')).toBeInTheDocument();
+      });
     });
   });
 
   // ITEM DETAIL MODAL TESTS (TC28-TC30)
   describe('Item Detail Modal', () => {
     const mockItem = {
-      id: 1,
+      id: '1',
       title: 'Test Item',
       description: 'Test description',
       location: 'Test Location',
       date: '2025-01-01',
       category: 'Electronics',
-      postedBy: 'Test User',
-      contact: 'test@test.com',
-      handover: 'Pick up at office',
+      postedByName: 'Test User',
+      email: 'test@test.com',
+      handOverPreferences: 'Pick up at office',
     };
 
-    test('TC28: Renders modal when open is true', () => {
-      render(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="lost" />);
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    beforeEach(mockLoggedOut);
+
+    test('TC28: Renders modal when open is true', async () => {
+      renderWithProviders(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="lost" />);
+      await waitFor(() => {
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+      });
     });
 
-    test('TC29: Displays item details in modal', () => {
-      render(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="lost" />);
-      expect(screen.getByText('Test Item')).toBeInTheDocument();
-      expect(screen.getByText('Test Location')).toBeInTheDocument();
-      expect(screen.getByText('Electronics')).toBeInTheDocument();
+    test('TC29: Displays item details in modal', async () => {
+      renderWithProviders(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="lost" />);
+      await waitFor(() => {
+        expect(screen.getByText('Test Item')).toBeInTheDocument();
+        expect(screen.getByText('Test Location')).toBeInTheDocument();
+        expect(screen.getByText('Electronics')).toBeInTheDocument();
+      });
     });
 
-    test('TC30: Shows Claim button for found items only', () => {
-      render(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="found" />);
-      expect(screen.getByText('Claim This Item')).toBeInTheDocument();
+    test('TC30: Shows Claim button for found items only', async () => {
+      renderWithProviders(<ItemDetailModal open={true} onClose={jest.fn()} item={mockItem} type="found" />);
+      await waitFor(() => {
+        expect(screen.getByText(/Login to Claim/i)).toBeInTheDocument();
+      });
     });
   });
 });

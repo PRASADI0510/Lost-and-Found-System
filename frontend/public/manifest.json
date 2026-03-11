@@ -1,0 +1,9 @@
+{
+  "short_name": "Lost & Found",
+  "name": "OUSL Lost and Found Management System",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#507FD9",
+  "background_color": "#ffffff"
+}
