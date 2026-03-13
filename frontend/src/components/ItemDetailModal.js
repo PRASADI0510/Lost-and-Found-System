@@ -274,36 +274,70 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
             <Box sx={{ width: { xs: '100%', md: '320px' }, backgroundColor: '#F8F8F8', p: 3 }}>
               {/* Contact Info - only visible to the item owner */}
               {isOwner && (
-                <Card sx={{ borderRadius: '8px', mb: 2, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#000000', fontSize: '1rem' }}>
-                      {type === 'lost' ? 'Owner Information' : 'Finder Information'}
-                    </Typography>
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                        <PersonIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+                <Card sx={{
+                  borderRadius: '12px', mb: 2,
+                  background: 'linear-gradient(135deg, #507FD9 0%, #3A5FAF 100%)',
+                  boxShadow: '0 4px 12px rgba(80, 127, 217, 0.3)',
+                  color: '#FFFFFF'
+                }}>
+                  <CardContent sx={{ p: 2.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2.5 }}>
+                      <Box sx={{
+                        width: 32, height: 32, borderRadius: '8px',
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5
+                      }}>
+                        <PersonIcon sx={{ fontSize: 18, color: '#FFFFFF' }} />
+                      </Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.95rem' }}>
+                        {type === 'lost' ? 'Your Contact Info' : 'Your Contact Info'}
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{
+                      backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: '10px', p: 2,
+                      display: 'flex', flexDirection: 'column', gap: 1.5
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <PersonIcon sx={{ fontSize: 16, mr: 1.5, color: 'rgba(255,255,255,0.7)' }} />
                         <Box>
-                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Posted by</Typography>
-                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Posted by
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
                             {item.postedByName || item.postedBy || 'Unknown'}
                           </Typography>
                         </Box>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                        <EmailIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+
+                      <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.12)' }} />
+
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <EmailIcon sx={{ fontSize: 16, mr: 1.5, color: 'rgba(255,255,255,0.7)' }} />
                         <Box>
-                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Contact</Typography>
-                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
-                            {item.email || item.contact || 'N/A'}
-                            {item.phoneNumber ? ` | ${item.phoneNumber}` : ''}
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Email & Phone
                           </Typography>
+                          <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
+                            {item.email || item.contact || 'N/A'}
+                          </Typography>
+                          {item.phoneNumber && (
+                            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem' }}>
+                              {item.phoneNumber}
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                        <HandshakeIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+
+                      <Box sx={{ borderTop: '1px solid rgba(255,255,255,0.12)' }} />
+
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <HandshakeIcon sx={{ fontSize: 16, mr: 1.5, color: 'rgba(255,255,255,0.7)' }} />
                         <Box>
-                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Handover</Typography>
-                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
+                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', display: 'block', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Handover
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#FFFFFF', fontWeight: 600, fontSize: '0.85rem' }}>
                             {item.handOverPreferences || item.handover || 'Contact the poster'}
                           </Typography>
                         </Box>
