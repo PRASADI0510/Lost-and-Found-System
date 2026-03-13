@@ -15,6 +15,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { db } from '../firebase';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 const CATEGORIES = [
@@ -41,6 +42,8 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState('');
   const [editSuccess, setEditSuccess] = useState('');
+  const [markFoundLoading, setMarkFoundLoading] = useState(false);
+  const [markFoundSuccess, setMarkFoundSuccess] = useState('');
 
   const isOwner = currentUser && item && item.postedBy === currentUser.uid;
 
@@ -60,6 +63,7 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
     setEditing(false);
     setEditError('');
     setEditSuccess('');
+    setMarkFoundSuccess('');
   }, [item]);
 
   const handleEditChange = (e) => {
@@ -93,6 +97,37 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
       setEditError('Failed to update item. Please try again.');
     } finally {
       setEditLoading(false);
+    }
+  };
+
+  const handleMarkFound = async () => {
+    setMarkFoundLoading(true);
+    try {
+      await updateDoc(doc(db, 'items', item.id), { status: 'handed_over', updatedAt: serverTimestamp() });
+
+      // Auto-reject all pending requests for this item
+      const pendingClaims = claims.filter((c) => c.itemId === item.id && c.status === 'pending');
+      for (const claim of pendingClaims) {
+        await updateDoc(doc(db, 'claims', claim.id), {
+          status: 'denied',
+          reviewNote: 'The owner has found this item themselves.',
+          updatedAt: serverTimestamp()
+        });
+        await addDoc(collection(db, 'notifications'), {
+          userId: claim.claimantId,
+          title: 'Request Closed',
+          message: `Your request for "${item.title}" has been closed — the owner found the item themselves.`,
+          type: 'claim_update', read: false, itemId: item.id,
+          createdAt: serverTimestamp()
+        });
+      }
+
+      await refresh();
+      setMarkFoundSuccess('Item marked as found! Glad you got it back.');
+    } catch (err) {
+      console.error('Error marking item as found:', err);
+    } finally {
+      setMarkFoundLoading(false);
     }
   };
 
@@ -345,6 +380,20 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
                     </Box>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Mark as Found - owner can self-resolve their lost item */}
+              {isOwner && type === 'lost' && item.status === 'open' && !markFoundSuccess && (
+                <Button fullWidth variant="contained" startIcon={<CheckCircleIcon />}
+                  onClick={handleMarkFound} disabled={markFoundLoading}
+                  sx={{ mb: 2, backgroundColor: '#2E7D32', color: '#FFFFFF', padding: '12px', fontSize: '0.95rem',
+                    fontWeight: 600, borderRadius: '8px', textTransform: 'none',
+                    '&:hover': { backgroundColor: '#1B5E20' } }}>
+                  {markFoundLoading ? <CircularProgress size={20} color="inherit" /> : 'I Found My Item'}
+                </Button>
+              )}
+              {markFoundSuccess && (
+                <Alert severity="success" sx={{ mb: 2, borderRadius: '8px' }}>{markFoundSuccess}</Alert>
               )}
 
               {/* Timeline */}
