@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogContent, Box, Typography, IconButton, Button, Card, CardContent,
-  Chip, TextField, Alert, CircularProgress
+  Chip, TextField, Alert, CircularProgress, MenuItem
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
@@ -14,7 +15,18 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+
+const CATEGORIES = [
+  'Wallet', 'Electronics', 'ID Card', 'Keys', 'Bag', 'Book',
+  'Clothing', 'Accessories', 'Phone', 'Bottle', 'Umbrella', 'Other'
+];
+
+const LOCATIONS = [
+  'Library 1st Floor', 'Library 2nd Floor', 'Cafeteria', 'Main Entrance',
+  'Computer Lab 1', 'Computer Lab 2', 'Physics Lab', 'Chemistry Lab',
+  'Auditorium', 'Parking Area', 'Student Center', 'Admin Building', 'Other'
+];
 
 const ItemDetailModal = ({ open, onClose, item, type }) => {
   const { currentUser, userProfile } = useAuth();
@@ -24,6 +36,65 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
   const [claimLoading, setClaimLoading] = useState(false);
   const [claimError, setClaimError] = useState('');
   const [claimSuccess, setClaimSuccess] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState('');
+  const [editSuccess, setEditSuccess] = useState('');
+
+  const isOwner = currentUser && item && item.postedBy === currentUser.uid;
+
+  useEffect(() => {
+    if (item) {
+      setEditData({
+        title: item.title || '',
+        category: item.category || '',
+        description: item.description || '',
+        date: item.date || '',
+        time: item.time || '',
+        location: item.location || '',
+        phoneNumber: item.phoneNumber || '',
+        handOverPreferences: item.handOverPreferences || ''
+      });
+    }
+    setEditing(false);
+    setEditError('');
+    setEditSuccess('');
+  }, [item]);
+
+  const handleEditChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSave = async () => {
+    if (!editData.title || !editData.category || !editData.description || !editData.date || !editData.location) {
+      setEditError('Please fill in all required fields (Title, Category, Description, Date, Location)');
+      return;
+    }
+    setEditLoading(true);
+    setEditError('');
+    try {
+      await updateDoc(doc(db, 'items', item.id), {
+        title: editData.title,
+        category: editData.category,
+        description: editData.description,
+        date: editData.date,
+        time: editData.time || '',
+        location: editData.location,
+        phoneNumber: editData.phoneNumber || '',
+        handOverPreferences: editData.handOverPreferences || '',
+        updatedAt: serverTimestamp()
+      });
+      await refresh();
+      setEditSuccess('Item updated successfully!');
+      setEditing(false);
+    } catch (err) {
+      console.error('Error updating item:', err);
+      setEditError('Failed to update item. Please try again.');
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   if (!item) return null;
 
@@ -83,42 +154,120 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth
       PaperProps={{ sx: { borderRadius: '12px', maxHeight: '90vh' } }}>
       <Box sx={{ position: 'relative' }}>
-        <IconButton onClick={onClose}
-          sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1,
-            backgroundColor: 'rgba(255, 255, 255, 0.9)', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' } }}>
-          <CloseIcon />
-        </IconButton>
+        <Box sx={{ position: 'absolute', right: 8, top: 8, zIndex: 1, display: 'flex', gap: 1 }}>
+          {isOwner && !editing && (
+            <IconButton onClick={() => { setEditing(true); setEditSuccess(''); }}
+              sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' } }}>
+              <EditIcon sx={{ color: '#507FD9' }} />
+            </IconButton>
+          )}
+          <IconButton onClick={onClose}
+            sx={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' } }}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
         <DialogContent sx={{ p: 0 }}>
           <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
             {/* Left Side */}
             <Box sx={{ flex: 1, p: 3 }}>
-              <Box sx={{
-                width: '100%', height: 300, backgroundColor: '#E0E0E0', borderRadius: '8px',
-                backgroundImage: item.imageUrl ? `url(${item.imageUrl})` : (item.image ? `url(${item.image})` : 'none'),
-                backgroundSize: 'cover', backgroundPosition: 'center',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
-                {!item.imageUrl && !item.image && <Typography variant="body2" color="textSecondary">No Image</Typography>}
-              </Box>
+              {editing ? (
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: '#000000' }}>Edit Item</Typography>
+                  {editError && <Alert severity="error" sx={{ mb: 2 }}>{editError}</Alert>}
+                  {editSuccess && <Alert severity="success" sx={{ mb: 2 }}>{editSuccess}</Alert>}
 
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: '#000000' }}>{item.title}</Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Item Title *</Typography>
+                  <TextField fullWidth name="title" value={editData.title} onChange={handleEditChange}
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
 
-              <Box sx={{ mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                  <LocationOnIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
-                  <Typography variant="body1" sx={{ color: '#666666' }}>{item.location}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-                  <CalendarTodayIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
-                  <Typography variant="body1" sx={{ color: '#666666' }}>{item.date}</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <LocalOfferIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
-                  <Chip label={item.category} sx={{ backgroundColor: '#F0F0F0', color: '#666666', fontSize: '0.875rem', height: '24px' }} />
-                </Box>
-              </Box>
+                  <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Category *</Typography>
+                  <TextField fullWidth name="category" select value={editData.category} onChange={handleEditChange}
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }}>
+                    {CATEGORIES.map((cat) => <MenuItem key={cat} value={cat.toLowerCase()}>{cat}</MenuItem>)}
+                  </TextField>
 
-              <Typography variant="body1" sx={{ color: '#666666', lineHeight: 1.6, mb: 3 }}>{item.description}</Typography>
+                  <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Description *</Typography>
+                  <TextField fullWidth name="description" multiline rows={3} value={editData.description} onChange={handleEditChange}
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+
+                  <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Date *</Typography>
+                      <TextField fullWidth name="date" type="date" value={editData.date} onChange={handleEditChange}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Time</Typography>
+                      <TextField fullWidth name="time" type="time" value={editData.time} onChange={handleEditChange}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+                    </Box>
+                  </Box>
+
+                  <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Location *</Typography>
+                  <TextField fullWidth name="location" select value={editData.location} onChange={handleEditChange}
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }}>
+                    {LOCATIONS.map((loc) => <MenuItem key={loc} value={loc}>{loc}</MenuItem>)}
+                  </TextField>
+
+                  <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Phone Number</Typography>
+                  <TextField fullWidth name="phoneNumber" value={editData.phoneNumber} onChange={handleEditChange}
+                    sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+
+                  {type === 'lost' && (
+                    <>
+                      <Typography variant="body2" sx={{ mb: 0.5, fontWeight: 600 }}>Hand Over Preferences</Typography>
+                      <TextField fullWidth name="handOverPreferences" value={editData.handOverPreferences} onChange={handleEditChange}
+                        sx={{ mb: 2, '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+                    </>
+                  )}
+
+                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                    <Button variant="outlined" onClick={() => { setEditing(false); setEditError(''); }}
+                      sx={{ borderRadius: '8px', textTransform: 'none' }}>
+                      Cancel
+                    </Button>
+                    <Button variant="contained" onClick={handleEditSave} disabled={editLoading}
+                      sx={{ backgroundColor: '#507FD9', borderRadius: '8px', textTransform: 'none',
+                        '&:hover': { backgroundColor: '#4070C9' } }}>
+                      {editLoading ? <CircularProgress size={20} color="inherit" /> : 'Save Changes'}
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <>
+                  <Box sx={{
+                    width: '100%', height: 300, backgroundColor: '#E0E0E0', borderRadius: '8px',
+                    backgroundImage: item.imageUrl ? `url(${item.imageUrl})` : (item.image ? `url(${item.image})` : 'none'),
+                    backgroundSize: 'cover', backgroundPosition: 'center',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
+                    {!item.imageUrl && !item.image && <Typography variant="body2" color="textSecondary">No Image</Typography>}
+                  </Box>
+
+                  {editSuccess && <Alert severity="success" sx={{ mb: 2 }}>{editSuccess}</Alert>}
+
+                  <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: '#000000' }}>{item.title}</Typography>
+
+                  <Box sx={{ mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <LocationOnIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
+                      <Typography variant="body1" sx={{ color: '#666666' }}>{item.location}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                      <CalendarTodayIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
+                      <Typography variant="body1" sx={{ color: '#666666' }}>{item.date}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                      <LocalOfferIcon sx={{ fontSize: 20, mr: 1, color: '#666666' }} />
+                      <Chip label={item.category} sx={{ backgroundColor: '#F0F0F0', color: '#666666', fontSize: '0.875rem', height: '24px' }} />
+                    </Box>
+                  </Box>
+
+                  <Typography variant="body1" sx={{ color: '#666666', lineHeight: 1.6, mb: 3 }}>{item.description}</Typography>
+                </>
+              )}
             </Box>
 
             {/* Right Side */}
