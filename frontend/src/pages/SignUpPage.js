@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, Grid, TextField, Typography, Link as MuiLink, Alert, CircularProgress, MenuItem } from '@mui/material';
+import { Box, Button, Container, Grid, TextField, Typography, Link as MuiLink, Alert, CircularProgress } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     fullName: '',
-    role: 'student',
     email: '',
     phone: '',
     password: '',
@@ -71,7 +70,7 @@ const SignUpPage = () => {
 
     try {
       setLoading(true);
-      await signup(formData.email, formData.password, formData.fullName, formData.role, formData.phone);
+      await signup(formData.email, formData.password, formData.fullName, 'student', formData.phone);
       navigate('/home');
     } catch (error) {
       console.error('Signup error:', error);
@@ -164,7 +163,7 @@ const SignUpPage = () => {
               )}
               <Box component="form" onSubmit={handleSubmit}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
                     Full Name *
                   </Typography>
@@ -182,26 +181,6 @@ const SignUpPage = () => {
                     helperText={fieldErrors.fullName}
                     sx={inputSx}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
-                    Role
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    id="role"
-                    name="role"
-                    select
-                    variant="outlined"
-                    value={formData.role}
-                    onChange={handleChange}
-                    disabled={loading}
-                    sx={inputSx}
-                  >
-                    <MenuItem value="student">Student</MenuItem>
-                    <MenuItem value="security_officer">Security Officer</MenuItem>
-                    <MenuItem value="admin">Administrator</MenuItem>
-                  </TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body2" sx={{ mb: 0.75, color: '#0D2D5E', fontWeight: 500, fontSize: '0.875rem' }}>
