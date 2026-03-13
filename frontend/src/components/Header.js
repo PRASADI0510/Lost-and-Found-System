@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import ShieldIcon from '@mui/icons-material/Shield';
+import HomeIcon from '@mui/icons-material/Home';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
@@ -67,6 +68,7 @@ const Header = () => {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+          <Button component={RouterLink} to="/home" variant="contained" sx={btnSx} startIcon={<HomeIcon />}>Home</Button>
           <Button component={RouterLink} to="/lost-items" variant="contained" sx={btnSx}>Lost Items</Button>
           <Button component={RouterLink} to="/found-items" variant="contained" sx={btnSx}>Found Items</Button>
 
