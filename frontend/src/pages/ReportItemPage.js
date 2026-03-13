@@ -279,16 +279,18 @@ const ReportItemPage = () => {
 
             {/* Phone Number and Hand Over Preferences */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={reportType === 'found' ? 12 : 6}>
                 <Typography variant="body1" sx={{ mb: 1, color: '#000000', fontWeight: 600 }}>Phone Number</Typography>
                 <TextField fullWidth name="phoneNumber" variant="outlined" value={formData.phoneNumber} onChange={handleChange}
                   sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
               </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body1" sx={{ mb: 1, color: '#000000', fontWeight: 600 }}>Hand Over Preferences</Typography>
-                <TextField fullWidth name="handOverPreferences" variant="outlined" value={formData.handOverPreferences} onChange={handleChange}
-                  sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
-              </Grid>
+              {reportType === 'lost' && (
+                <Grid item xs={12} md={6}>
+                  <Typography variant="body1" sx={{ mb: 1, color: '#000000', fontWeight: 600 }}>Hand Over Preferences</Typography>
+                  <TextField fullWidth name="handOverPreferences" variant="outlined" value={formData.handOverPreferences} onChange={handleChange}
+                    sx={{ '& .MuiOutlinedInput-root': { backgroundColor: '#F8F8F8', borderRadius: '8px' } }} />
+                </Grid>
+              )}
             </Grid>
 
             {/* Buttons */}
