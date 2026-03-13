@@ -272,44 +272,46 @@ const ItemDetailModal = ({ open, onClose, item, type }) => {
 
             {/* Right Side */}
             <Box sx={{ width: { xs: '100%', md: '320px' }, backgroundColor: '#F8F8F8', p: 3 }}>
-              {/* Contact Info */}
-              <Card sx={{ borderRadius: '8px', mb: 2, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#000000', fontSize: '1rem' }}>
-                    {type === 'lost' ? 'Owner Information' : 'Finder Information'}
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                      <PersonIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
-                      <Box>
-                        <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Posted by</Typography>
-                        <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
-                          {item.postedByName || item.postedBy || 'Unknown'}
-                        </Typography>
+              {/* Contact Info - only visible to the item owner */}
+              {isOwner && (
+                <Card sx={{ borderRadius: '8px', mb: 2, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: '#000000', fontSize: '1rem' }}>
+                      {type === 'lost' ? 'Owner Information' : 'Finder Information'}
+                    </Typography>
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
+                        <PersonIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+                        <Box>
+                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Posted by</Typography>
+                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
+                            {item.postedByName || item.postedBy || 'Unknown'}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
+                        <EmailIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+                        <Box>
+                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Contact</Typography>
+                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
+                            {item.email || item.contact || 'N/A'}
+                            {item.phoneNumber ? ` | ${item.phoneNumber}` : ''}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                        <HandshakeIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
+                        <Box>
+                          <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Handover</Typography>
+                          <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
+                            {item.handOverPreferences || item.handover || 'Contact the poster'}
+                          </Typography>
+                        </Box>
                       </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                      <EmailIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
-                      <Box>
-                        <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Contact</Typography>
-                        <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
-                          {item.email || item.contact || 'N/A'}
-                          {item.phoneNumber ? ` | ${item.phoneNumber}` : ''}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                      <HandshakeIcon sx={{ fontSize: 18, mr: 1, color: '#507FD9', mt: 0.3 }} />
-                      <Box>
-                        <Typography variant="caption" sx={{ color: '#999999', display: 'block' }}>Handover</Typography>
-                        <Typography variant="body2" sx={{ color: '#000000', fontWeight: 500 }}>
-                          {item.handOverPreferences || item.handover || 'Contact the poster'}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Timeline */}
               {item.timeline && item.timeline.length > 0 && (
