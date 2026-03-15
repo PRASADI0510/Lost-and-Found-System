@@ -32,7 +32,7 @@ const LandingPage = () => {
               >
                 fast &
               </Typography>
-              <br />
+             
               <Typography
                 component="span"
                 sx={{
