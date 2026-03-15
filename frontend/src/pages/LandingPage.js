@@ -20,7 +20,7 @@ const LandingPage = () => {
                 color: '#000000'
               }}
             >
-              Reunite people with their things—{' '}
+              Reunite people with their things{' '}
               <Typography
                 component="span"
                 sx={{
