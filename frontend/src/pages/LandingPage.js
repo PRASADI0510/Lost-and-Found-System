@@ -20,7 +20,7 @@ const LandingPage = () => {
                 color: '#000000'
               }}
             >
-              Reunite people with their things—{' '}
+              Reunite people with their things{' '}
               <Typography
                 component="span"
                 sx={{
@@ -55,7 +55,7 @@ const LandingPage = () => {
                 fontSize: '1.125rem'
               }}
             >
-              Report lost items in seconds, browse found items, and get notified when there's a match. Privacy-first and managed by the help desk.
+              Report lost items in seconds, browse found items, and get notified when there's a match. Privacy first and managed by the help desk.
             </Typography>
             <Button
               variant="contained"

@@ -75,13 +75,13 @@ const Header = () => {
     { label: 'About', path: '/about', icon: <InfoIcon />, show: true },
   ];
 
-  // Button styles - responsive
+  // Button styles - responsive and smaller
   const btnSx = {
     backgroundColor: '#507FD9',
     color: '#FFFFFF',
-    fontSize: isMobile ? '0.75rem' : isTablet ? '0.85rem' : '0.95rem',
-    padding: isMobile ? '6px 12px' : isTablet ? '7px 16px' : '8px 20px',
-    minWidth: isMobile ? '60px' : isTablet ? '70px' : 'auto',
+    fontSize: isMobile ? '0.7rem' : isTablet ? '0.75rem' : '0.85rem',
+    padding: isMobile ? '5px 10px' : isTablet ? '6px 14px' : '7px 18px',
+    minWidth: isMobile ? '50px' : isTablet ? '60px' : '70px',
     '&:hover': { backgroundColor: '#4070C9' },
   };
 
@@ -212,24 +212,9 @@ const Header = () => {
           </>
         )}
 
-        {/* Auth Actions */}
-        <Box sx={{ mt: 'auto' }}>
-          {currentUser ? (
-            <Button
-              fullWidth
-              variant="contained"
-              startIcon={<LogoutIcon />}
-              onClick={handleSignOut}
-              sx={{
-                backgroundColor: '#DC3545',
-                '&:hover': { backgroundColor: '#B02A37' },
-                borderRadius: '8px',
-                py: 1.5,
-              }}
-            >
-              Sign Out
-            </Button>
-          ) : (
+        {/* Auth Actions - Only show login/signup for non-authenticated users */}
+        {!currentUser && (
+          <Box sx={{ mt: 'auto' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Button
                 fullWidth
@@ -238,7 +223,12 @@ const Header = () => {
                 to="/login"
                 startIcon={<LoginIcon />}
                 onClick={() => setMobileMenuOpen(false)}
-                sx={{ ...btnSx, py: 1.5, borderRadius: '8px' }}
+                sx={{ 
+                  backgroundColor: '#507FD9',
+                  '&:hover': { backgroundColor: '#4070C9' },
+                  py: 1.5, 
+                  borderRadius: '8px' 
+                }}
               >
                 Login
               </Button>
@@ -262,8 +252,8 @@ const Header = () => {
                 Sign Up
               </Button>
             </Box>
-          )}
-        </Box>
+          </Box>
+        )}
       </Box>
     </Drawer>
   );
@@ -282,34 +272,34 @@ const Header = () => {
       >
         <Toolbar 
           sx={{ 
-            minHeight: isMobile ? '60px' : '80px',
-            px: isMobile ? 2 : 3,
+            minHeight: isMobile ? '56px' : isTablet ? '64px' : '70px',
+            px: isMobile ? 1.5 : 2.5,
           }}
         >
-          {/* Logo Section */}
+          {/* Logo Section - Links to Landing Page */}
           <Box 
             component={RouterLink} 
-            to="/home"
+            to="/"
             sx={{ 
               display: 'flex', 
               alignItems: 'center', 
               flexGrow: 1, 
-              gap: isMobile ? 1 : 1.5, 
+              gap: isMobile ? 0.8 : 1.2, 
               textDecoration: 'none',
               cursor: 'pointer', 
               '&:hover': { opacity: 0.8 } 
             }}
           >
             <Box sx={{ 
-              width: isMobile ? 36 : 48, 
-              height: isMobile ? 36 : 48, 
+              width: isMobile ? 32 : isTablet ? 36 : 40, 
+              height: isMobile ? 32 : isTablet ? 36 : 40, 
               backgroundColor: '#507FD9', 
-              borderRadius: '10px',
+              borderRadius: '8px',
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center' 
             }}>
-              <ShieldIcon sx={{ fontSize: isMobile ? 20 : 28, color: '#FFFFFF' }} />
+              <ShieldIcon sx={{ fontSize: isMobile ? 18 : isTablet ? 22 : 24, color: '#FFFFFF' }} />
             </Box>
             <Box sx={{ display: isMobile && !isTablet ? 'none' : 'block' }}>
               <Typography 
@@ -318,8 +308,8 @@ const Header = () => {
                 sx={{ 
                   fontWeight: 700, 
                   color: '#000000', 
-                  lineHeight: 1.2, 
-                  fontSize: isMobile ? '0.9rem' : isTablet ? '1rem' : '1.1rem' 
+                  lineHeight: 1.1, 
+                  fontSize: isMobile ? '0.85rem' : isTablet ? '0.95rem' : '1.05rem' 
                 }}
               >
                 Lost and Found
@@ -329,9 +319,10 @@ const Header = () => {
                 component="div"
                 sx={{ 
                   color: '#666666', 
-                  fontSize: isMobile ? '0.65rem' : '0.8rem', 
+                  fontSize: isMobile ? '0.6rem' : isTablet ? '0.7rem' : '0.75rem', 
                   fontWeight: 400,
-                  display: isTablet ? 'none' : 'block'
+                  display: isTablet ? 'none' : 'block',
+                  lineHeight: 1
                 }}
               >
                 The Open University of Sri Lanka
@@ -341,14 +332,13 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{ display: 'flex', gap: isTablet ? 0.5 : 1, alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', gap: isTablet ? 0.3 : 0.5, alignItems: 'center' }}>
               {navItems.filter(item => item.show).map((item) => (
                 <Button
                   key={item.path}
                   component={RouterLink}
                   to={item.path}
                   variant="contained"
-                  startIcon={isDesktop ? item.icon : null}
                   sx={{
                     ...btnSx,
                     backgroundColor: location.pathname === item.path ? '#4070C9' : '#507FD9',
@@ -364,11 +354,12 @@ const Header = () => {
                     onClick={(e) => setAnchorEl(e.currentTarget)} 
                     sx={{ 
                       color: '#507FD9',
-                      ml: 1,
+                      ml: 0.5,
+                      padding: '6px',
                     }}
                   >
                     <Badge badgeContent={unreadCount} color="error">
-                      <NotificationsIcon sx={{ fontSize: isTablet ? 22 : 24 }} />
+                      <NotificationsIcon sx={{ fontSize: isTablet ? 20 : 22 }} />
                     </Badge>
                   </IconButton>
 
@@ -420,25 +411,6 @@ const Header = () => {
                       ))
                     )}
                   </Menu>
-
-                  <Button
-                    variant="outlined"
-                    onClick={handleSignOut}
-                    sx={{
-                      borderColor: '#DC3545',
-                      color: '#DC3545',
-                      fontSize: isTablet ? '0.85rem' : '0.95rem',
-                      padding: isTablet ? '7px 16px' : '8px 20px',
-                      ml: 1,
-                      '&:hover': {
-                        backgroundColor: '#DC3545',
-                        color: '#FFFFFF',
-                        borderColor: '#DC3545',
-                      }
-                    }}
-                  >
-                    Sign Out
-                  </Button>
                 </>
               )}
 
