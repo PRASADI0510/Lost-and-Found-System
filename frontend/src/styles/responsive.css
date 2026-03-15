@@ -1,0 +1,514 @@
+/* Global Responsive Styles for Lost & Found System */
+
+/* ============================= */
+/* Base Reset & Responsive Setup */
+/* ============================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  /* Fluid base font size */
+  font-size: clamp(14px, 1vw, 20px);
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================= */
+/* Mobile First: 320px - 599px  */
+/* ============================= */
+
+/* Extra Small Mobile: 320px (iPhone SE, older phones) */
+@media (max-width: 359px) {
+  .MuiContainer-root {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  /* Hide non-essential columns in tables */
+  .MuiTable-root th:nth-child(n+4),
+  .MuiTable-root td:nth-child(n+4) {
+    display: none;
+  }
+  
+  /* Stack form fields */
+  .MuiGrid-container {
+    flex-direction: column;
+  }
+  
+  /* Smaller dialogs */
+  .MuiDialog-paper {
+    margin: 8px !important;
+    max-width: calc(100vw - 16px) !important;
+  }
+}
+
+/* Standard Mobile: 360px - 414px */
+@media (min-width: 360px) and (max-width: 599px) {
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Responsive tables - horizontal scroll */
+  .MuiTableContainer-root {
+    overflow-x: auto;
+  }
+  
+  /* Cards stack vertically */
+  .MuiGrid-item {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ============================= */
+/* Tablet: 600px - 1023px        */
+/* ============================= */
+
+/* Small Tablet: 600px - 768px (Small tablets portrait) */
+@media (min-width: 600px) and (max-width: 767px) {
+  .MuiContainer-root {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    max-width: 600px !important;
+  }
+  
+  /* Two column grid */
+  .MuiGrid-item {
+    flex-basis: 50% !important;
+    max-width: 50% !important;
+  }
+}
+
+/* iPad Portrait: 768px - 834px */
+@media (min-width: 768px) and (max-width: 833px) {
+  .MuiContainer-root {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+    max-width: 768px !important;
+  }
+  
+  /* Show more table columns */
+  .MuiTable-root th:nth-child(n+4),
+  .MuiTable-root td:nth-child(n+4) {
+    display: table-cell;
+  }
+}
+
+/* iPad Pro 11" & Standard Tablets: 834px - 1023px */
+@media (min-width: 834px) and (max-width: 1023px) {
+  .MuiContainer-root {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    max-width: 900px !important;
+  }
+  
+  /* Three column grid */
+  .MuiGrid-item {
+    flex-basis: 33.333% !important;
+    max-width: 33.333% !important;
+  }
+}
+
+/* ============================= */
+/* Desktop: 1024px - 1919px      */
+/* ============================= */
+
+/* Small Laptop: 1024px - 1279px */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .MuiContainer-root {
+    padding-left: 48px !important;
+    padding-right: 48px !important;
+    max-width: 1024px !important;
+  }
+}
+
+/* Standard Laptop: 1280px - 1439px */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .MuiContainer-root {
+    padding-left: 56px !important;
+    padding-right: 56px !important;
+    max-width: 1200px !important;
+  }
+}
+
+/* Large Desktop: 1440px - 1919px */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .MuiContainer-root {
+    padding-left: 64px !important;
+    padding-right: 64px !important;
+    max-width: 1360px !important;
+  }
+}
+
+/* ============================= */
+/* High Resolution: 1920px+      */
+/* ============================= */
+
+/* Full HD: 1920px - 2559px */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .MuiContainer-root {
+    padding-left: 80px !important;
+    padding-right: 80px !important;
+    max-width: 1600px !important;
+  }
+  
+  /* Larger spacing */
+  .MuiGrid-container {
+    gap: 24px;
+  }
+}
+
+/* 2K/QHD: 2560px - 3839px */
+@media (min-width: 2560px) and (max-width: 3839px) {
+  html {
+    font-size: 18px;
+  }
+  
+  .MuiContainer-root {
+    padding-left: 120px !important;
+    padding-right: 120px !important;
+    max-width: 2200px !important;
+  }
+  
+  /* Scale up all spacing */
+  .MuiButton-root {
+    padding: 16px 48px !important;
+  }
+  
+  .MuiTextField-root input {
+    padding: 20px 24px !important;
+  }
+  
+  .MuiCard-root {
+    padding: 32px !important;
+  }
+}
+
+/* 4K/UHD: 3840px - 5119px */
+@media (min-width: 3840px) and (max-width: 5119px) {
+  html {
+    font-size: 24px;
+  }
+  
+  .MuiContainer-root {
+    padding-left: 160px !important;
+    padding-right: 160px !important;
+    max-width: 3200px !important;
+  }
+  
+  /* Extra large components */
+  .MuiButton-root {
+    padding: 20px 64px !important;
+    border-radius: 60px !important;
+  }
+  
+  .MuiTextField-root input {
+    padding: 24px 32px !important;
+  }
+  
+  .MuiCard-root {
+    padding: 48px !important;
+    border-radius: 24px !important;
+  }
+}
+
+/* 5K: 5120px - 7679px */
+@media (min-width: 5120px) and (max-width: 7679px) {
+  html {
+    font-size: 28px;
+  }
+  
+  .MuiContainer-root {
+    padding-left: 200px !important;
+    padding-right: 200px !important;
+    max-width: 4400px !important;
+  }
+}
+
+/* 8K: 7680px+ */
+@media (min-width: 7680px) {
+  html {
+    font-size: 36px;
+  }
+  
+  .MuiContainer-root {
+    padding-left: 300px !important;
+    padding-right: 300px !important;
+    max-width: 6400px !important;
+  }
+  
+  /* Massive scaling for 8K displays */
+  .MuiButton-root {
+    padding: 32px 96px !important;
+    border-radius: 80px !important;
+    min-height: 96px !important;
+  }
+  
+  .MuiTextField-root input {
+    padding: 36px 48px !important;
+    font-size: 2rem !important;
+  }
+  
+  .MuiCard-root {
+    padding: 72px !important;
+    border-radius: 48px !important;
+  }
+}
+
+/* ============================= */
+/* Orientation Specific Styles   */
+/* ============================= */
+
+/* Portrait Mode */
+@media (orientation: portrait) {
+  /* Stack navigation items vertically on small screens */
+  @media (max-width: 768px) {
+    .MuiAppBar-root .MuiToolbar-root {
+      flex-direction: column;
+      padding: 16px !important;
+    }
+  }
+}
+
+/* Landscape Mode */
+@media (orientation: landscape) {
+  /* Reduce vertical spacing in landscape on small devices */
+  @media (max-height: 600px) {
+    .MuiAppBar-root {
+      min-height: 48px !important;
+    }
+    
+    .MuiContainer-root {
+      padding-top: 16px !important;
+      padding-bottom: 16px !important;
+    }
+  }
+}
+
+/* ============================= */
+/* Device-Specific Adjustments   */
+/* ============================= */
+
+/* iPhone SE, iPhone 6/7/8 */
+@media (width: 375px) and (height: 667px) {
+  .MuiDialog-paper {
+    max-height: 90vh !important;
+  }
+}
+
+/* iPhone 12/13/14 */
+@media (width: 390px) and (height: 844px) {
+  /* Account for notch */
+  .MuiAppBar-root {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* iPhone Plus/Max models */
+@media (width: 414px) and (height: 896px) {
+  /* Larger touch targets */
+  .MuiButton-root {
+    min-height: 48px !important;
+  }
+}
+
+/* iPad specific adjustments */
+@media (width: 768px) and (height: 1024px) {
+  /* Optimize for iPad's aspect ratio */
+  .MuiGrid-container {
+    justify-content: space-evenly;
+  }
+}
+
+/* iPad Pro 11" */
+@media (width: 834px) and (height: 1194px) {
+  .MuiContainer-root {
+    max-width: 780px !important;
+  }
+}
+
+/* iPad Pro 12.9" */
+@media (width: 1024px) and (height: 1366px) {
+  .MuiContainer-root {
+    max-width: 960px !important;
+  }
+}
+
+/* ============================= */
+/* High DPI Display Support      */
+/* ============================= */
+
+/* Retina displays (2x) */
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  /* Sharper borders and shadows */
+  .MuiCard-root {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 
+                0 1px 2px rgba(0,0,0,0.24) !important;
+  }
+  
+  .MuiButton-root {
+    border-width: 0.5px;
+  }
+}
+
+/* Retina displays (3x) */
+@media (-webkit-min-device-pixel-ratio: 3),
+       (min-resolution: 288dpi) {
+  /* Even sharper details */
+  * {
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+}
+
+/* ============================= */
+/* Responsive Utilities          */
+/* ============================= */
+
+/* Hide on mobile */
+@media (max-width: 599px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Hide on tablet */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+/* Hide on desktop */
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+/* Show only on mobile */
+@media (min-width: 600px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+/* Show only on tablet */
+.tablet-only {
+  display: none !important;
+}
+@media (min-width: 600px) and (max-width: 1023px) {
+  .tablet-only {
+    display: initial !important;
+  }
+}
+
+/* Show only on desktop */
+@media (max-width: 1023px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+/* ============================= */
+/* Responsive Table Adjustments  */
+/* ============================= */
+
+/* Mobile table transformation */
+@media (max-width: 599px) {
+  .responsive-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .responsive-table table {
+    min-width: 100%;
+  }
+  
+  /* Convert table to cards on very small screens */
+  @media (max-width: 359px) {
+    .responsive-table table,
+    .responsive-table thead,
+    .responsive-table tbody,
+    .responsive-table th,
+    .responsive-table td,
+    .responsive-table tr {
+      display: block;
+    }
+    
+    .responsive-table thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+    
+    .responsive-table tr {
+      margin-bottom: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    
+    .responsive-table td {
+      position: relative;
+      padding-left: 50%;
+      text-align: right;
+    }
+    
+    .responsive-table td:before {
+      position: absolute;
+      left: 8px;
+      content: attr(data-label);
+      font-weight: bold;
+      text-align: left;
+    }
+  }
+}
+
+/* ============================= */
+/* Print Styles                  */
+/* ============================= */
+
+@media print {
+  /* Optimize for printing */
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Hide navigation and non-essential elements */
+  .MuiAppBar-root,
+  .MuiBottomNavigation-root,
+  .MuiButton-root,
+  .no-print {
+    display: none !important;
+  }
+  
+  /* Ensure content fits on page */
+  .MuiContainer-root {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  /* Prevent page breaks inside elements */
+  .MuiCard-root,
+  .MuiTable-root {
+    page-break-inside: avoid;
+  }
+}
