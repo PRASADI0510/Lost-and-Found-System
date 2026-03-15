@@ -57,6 +57,7 @@ const LandingPage = () => {
             >
               Report lost items in seconds, browse found items, and get notified when there's a match. Privacy first and managed by the help desk.
             </Typography>
+            <br/>
             <Button
               variant="contained"
               size="large"
