@@ -15,19 +15,19 @@ import PhoneIcon from "@mui/icons-material/Phone";
 
 const AboutPage = () => {
   const teamMembers = [
-    { name: "Zahinab Falil", avatar: "/team/zahinab.png", color: "#4A90E2" },
+    { name: "Zahinab Falil", avatar: "/team/zahinab.png", color: "#076fa8" },
     {
       name: "Prasadika Jagoda",
       avatar: "/team/prasadika.png",
-      color: "#F5E6D3",
+      color: "#ae484f",
     },
     {
       name: "Nethranjali Silva",
       avatar: "/team/nethranjali.png",
-      color: "#FFB6A3",
+      color: "#50ec6f",
     },
-    { name: "Udara sampath", avatar: "/team/udara.png", color: "#87CEEB" },
-    { name: "Dinodi Rimesha", avatar: "/team/dinodi.png", color: "#E74C3C" },
+    { name: "Udara sampath", avatar: "/team/udara.png", color: "#71b79a" },
+    { name: "Dinodi Rimesha", avatar: "/team/dinodi.png", color: "#932db5" },
   ];
 
   const socialLinks = [
@@ -75,7 +75,7 @@ const AboutPage = () => {
               fontWeight: 700,
               textAlign: "center",
               mb: 6,
-              color: "#000000",
+              color: "#244c58",
             }}
           >
             Team
