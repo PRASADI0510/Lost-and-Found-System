@@ -55,7 +55,7 @@ const LandingPage = () => {
                 fontSize: '1.125rem'
               }}
             >
-              Report lost items in seconds, browse found items, and get notified when there's a match. Privacy-first and managed by the help desk.
+              Report lost items in seconds, browse found items, and get notified when there's a match. Privacy first and managed by the help desk.
             </Typography>
             <Button
               variant="contained"
