@@ -67,3 +67,5 @@ EXECUTION_PLAN.md
 .claude/settings.local.json
 flows
 flows.txt
+populate_trello.js
+SETUP_INSTRUCTIONS.md
