@@ -276,10 +276,10 @@ const Header = () => {
             px: isMobile ? 1.5 : 2.5,
           }}
         >
-          {/* Logo Section */}
+          {/* Logo Section - Links to Landing Page */}
           <Box 
             component={RouterLink} 
-            to="/home"
+            to="/"
             sx={{ 
               display: 'flex', 
               alignItems: 'center', 
